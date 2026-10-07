@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tristan ❤️ Huini - Happy Monthsary!</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Poppins', sans-serif;
+      --font-handwriting: 'Caveat', cursive;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: radial-gradient(circle at 50% 20%, #fff1f2 0%, #f5f3ff 50%, #f0fdf4 100%);
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .font-heading { font-family: var(--font-heading); }
+    .font-handwriting { font-family: var(--font-handwriting); }
+
+    /* Glassmorphism Cards */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 30px -5px rgba(244, 114, 182, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Arcade Cabinet Aesthetic */
+    .arcade-cabinet-frame {
+      background: linear-gradient(180deg, #fce7f3 0%, #f472b6 35%, #ec4899 100%);
+      border: 5px solid #fbcfe8;
+      box-shadow: 0 20px 45px -10px rgba(236, 72, 153, 0.35), 0 0 25px rgba(244, 114, 182, 0.3);
+    }
+
+    .arcade-btn {
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 0 #be185d, 0 8px 15px rgba(190, 24, 93, 0.3);
+    }
+    .arcade-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #be185d, 0 3px 6px rgba(190, 24, 93, 0.2);
+    }
+
+    /* Floating Heart Background Animation */
+    @keyframes floatHeart {
+      0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+      50% { opacity: 0.6; }
+      100% { transform: translateY(-100vh) rotate(360deg) scale(1.2); opacity: 0; }
+    }
+    .floating-heart {
+      position: fixed;
+      bottom: -50px;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatHeart 12s linear infinite;
+    }
+
+    /* Stamp Effect */
+    @keyframes stampBounce {
+      0% { transform: scale(3) rotate(-15deg); opacity: 0; }
+      70% { transform: scale(0.9) rotate(-12deg); opacity: 1; }
+      100% { transform: scale(1) rotate(-12deg); opacity: 0.92; }
+    }
+    .stamp-redeemed {
+      animation: stampBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    /* Shaking error animation */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #fdf2f8; }
+    ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 999px; }
+  </style>
+</head>
+<body class="relative min-h-screen pb-16">
+
+  <!-- Floating Background Hearts -->
+  <div id="heartsContainer" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <!-- PASSWORD PROTECTION GATE SCREEN -->
+  <div id="passwordModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-500">
+    <div id="passwordCard" class="glass-card max-w-md w-full rounded-3xl p-6 md:p-8 text-center shadow-2xl border-4 border-pink-300 relative z-10">
+      <div class="w-20 h-20 bg-pink-100 text-pink-600 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-4 shadow-inner">
+        🔐
+      </div>
+
+      <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 font-heading">
+        Secret Lock
+      </h2>
+
+      <p class="text-xs md:text-sm text-slate-600 mt-2 font-medium">
+        Enter the special date you officially said yes to Tristan!
+      </p>
+
+      <div class="mt-6 space-y-4">
+        <input type="password" id="passwordInput" placeholder="Enter special date..." 
+          class="w-full text-center text-xl tracking-widest font-mono py-3.5 px-4 rounded-2xl border-2 border-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-200 bg-white/90 font-bold"
+          onkeypress="if(event.key==='Enter') verifyPassword()" />
+
+        <div id="passwordError" class="text-xs font-bold text-rose-600 hidden flex items-center justify-center gap-1">
+          <i class="fa-solid fa-circle-exclamation"></i> Oops, wrong date! Try again my love 💕
+        </div>
+
+        <button onclick="verifyPassword()" class="w-full arcade-btn bg-pink-500 hover:bg-pink-600 text-white font-heading font-bold py-3.5 rounded-2xl text-base transition">
+          Unlock My Gift 💖
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="relative z-10 max-w-5xl mx-auto px-4 pt-8 md:pt-12 space-y-8">
+
+    <!-- HEADER SECTION -->
+    <header class="text-center space-y-3">
+      <h1 class="text-3xl md:text-5xl font-extrabold text-pink-600 font-heading tracking-tight drop-shadow-sm">
+        Happy Monthsary, My Love! 💖
+      </h1>
+      <p class="text-slate-600 text-sm md:text-lg max-w-2xl mx-auto font-medium">
+        Even across 10,000 km, my heart is always right next to yours.
+      </p>
+    </header>
+
+    <!-- LIVE DUAL TIMEZONE CLOCKS -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <!-- Tristan Card -->
+      <div class="glass-card rounded-3xl p-5 border-2 border-pink-200 flex flex-col justify-between relative overflow-hidden">
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🇪🇸</span>
+            <h3 class="font-heading font-bold text-lg text-slate-800">Tristan 🇪🇸</h3>
+          </div>
+          <span id="spainSky" class="text-xl">☀️</span>
+        </div>
+        <div class="my-2">
+          <div id="spainTime" class="text-3xl md:text-4xl font-extrabold font-mono tracking-wider text-pink-600">00:00:00</div>
+          <div id="spainDate" class="text-xs text-slate-500 font-medium mt-1">Fetching time...</div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-pink-100 flex items-center gap-2 text-xs font-semibold text-pink-700 bg-pink-50/70 p-2.5 rounded-xl">
+          <i class="fa-solid fa-heart-pulse text-pink-500 animate-pulse"></i>
+          <span id="spainStatus">Loading activity...</span>
+        </div>
+      </div>
+
+      <!-- Huini Card -->
+      <div class="glass-card rounded-3xl p-5 border-2 border-purple-200 flex flex-col justify-between relative overflow-hidden">
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🇸🇬</span>
+            <h3 class="font-heading font-bold text-lg text-slate-800">Huini 🇸🇬</h3>
+          </div>
+          <span id="sgSky" class="text-xl">🌙</span>
+        </div>
+        <div class="my-2">
+          <div id="singaporeTime" class="text-3xl md:text-4xl font-extrabold font-mono tracking-wider text-purple-600">00:00:00</div>
+          <div id="singaporeDate" class="text-xs text-slate-500 font-medium mt-1">Fetching time...</div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-purple-100 flex items-center gap-2 text-xs font-semibold text-purple-700 bg-purple-50/70 p-2.5 rounded-xl">
+          <i class="fa-solid fa-sparkles text-purple-500"></i>
+          <span id="sgStatus">Loading activity...</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- DISTANCE PILL -->
+    <div class="text-center">
+      <div class="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-heading text-xs md:text-sm font-bold px-5 py-2.5 rounded-full shadow-lg">
+        <i class="fa-solid fa-plane"></i>
+        <span>Distance: ~10,800 km apart • Days until next hug: Countdown active</span>
+      </div>
+    </div>
+
+    <!-- ANIMATED LOVE LETTER ACCORDION -->
+    <section class="glass-card rounded-3xl p-6 border-2 border-pink-300">
+      <button onclick="toggleLoveLetter()" class="w-full flex justify-between items-center focus:outline-none group">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-pink-100 rounded-2xl flex items-center justify-center text-pink-600 text-xl group-hover:scale-110 transition-transform">
+            💌
+          </div>
+          <div class="text-left">
+            <h3 class="font-heading font-bold text-lg text-slate-800">A Letter For My Dearest Huini</h3>
+            <p class="text-xs text-slate-500">Click to expand my monthsary letter to you 💕</p>
+          </div>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 font-bold transition-transform duration-300" id="letterChevron">
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+      </button>
+
+      <div id="letterContent" class="hidden mt-6 pt-6 border-t border-pink-100 space-y-4 font-handwriting text-xl md:text-2xl text-slate-700 leading-relaxed bg-pink-50/40 p-6 rounded-2xl">
+        <p>My Dearest Huini,</p>
+        <p>Happy Monthsary, my love! Even though there are over 10,000 kilometers and a 6-hour time difference separating Spain and Singapore, you are the first thing on my mind when I wake up and the last thought before I sleep.</p>
+        <p>I built this little arcade claw machine filled with special coupons just for you. Every single coupon represents a promise and an adventure waiting for us when we finally meet and hug each other tight.</p>
+        <p>Thank you for being my constant warmth, my biggest smile, and my favorite person in the entire world. I love you so much, Huini!</p>
+        <p class="text-right font-bold text-pink-600 mt-4">— Forever Yours, Tristan ❤️</p>
+      </div>
+    </section>
+
+    <!-- ARCADE CLAW MACHINE GAME -->
+    <section class="arcade-cabinet-frame rounded-3xl p-4 md:p-6 text-white shadow-2xl relative overflow-hidden">
+      
+      <!-- Top Arcade Header Box -->
+      <div class="text-center mb-4 bg-pink-900/40 backdrop-blur-sm p-3 rounded-2xl border border-pink-300/30 flex justify-between items-center px-6">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-rose-400 animate-ping"></span>
+          <span class="font-heading font-extrabold text-sm md:text-base tracking-wide text-pink-200">TRISTAN & HUINI ARCADE</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="resetClawMachine()" class="text-xs bg-pink-800/80 hover:bg-pink-700 text-pink-100 font-bold px-3 py-1.5 rounded-xl border border-pink-400/40 transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> Reset Game
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Arcade Screen -->
+      <div class="relative bg-slate-900 rounded-2xl overflow-hidden border-4 border-pink-300/40 shadow-inner max-w-xl mx-auto">
+        <canvas id="clawCanvas" width="500" height="360" class="w-full h-auto block bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950"></canvas>
+      </div>
+
+      <!-- Arcade Arcade Controls -->
+      <div class="max-w-md mx-auto mt-6 bg-pink-900/60 p-4 rounded-2xl border border-pink-300/30 flex items-center justify-between gap-4">
+        
+        <!-- Left/Right Directional Buttons -->
+        <div class="flex gap-2">
+          <button id="btnLeft" class="arcade-btn w-14 h-14 bg-pink-500 hover:bg-pink-400 text-white rounded-2xl text-xl flex items-center justify-center font-black">
+            👈
+          </button>
+          <button id="btnRight" class="arcade-btn w-14 h-14 bg-pink-500 hover:bg-pink-400 text-white rounded-2xl text-xl flex items-center justify-center font-black">
+            👉
+          </button>
+        </div>
+
+        <!-- Grab Button -->
+        <button id="btnDrop" class="arcade-btn flex-1 h-14 bg-rose-500 hover:bg-rose-400 text-white rounded-2xl font-heading font-extrabold text-base md:text-lg flex items-center justify-center gap-2">
+          <span>GRAB PRIZE</span> 🎯
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- INTERACTIVE COUPON WALLET -->
+    <section class="space-y-6">
+      
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-extrabold font-heading text-slate-800 flex items-center gap-2">
+            🎟️ Huini's Coupon Locker
+          </h2>
+          <p class="text-xs md:text-sm text-slate-500">Collect coupons from the Claw Machine to use when we meet!</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span id="couponCountBadge" class="bg-pink-500 text-white font-heading font-bold text-xs px-3.5 py-1.5 rounded-full shadow-sm">
+            0 / 25 Unlocked
+          </span>
+          <button onclick="resetAllCoupons()" class="text-xs text-rose-500 hover:text-rose-700 font-bold bg-white p-2 rounded-xl border border-rose-200 transition">
+            <i class="fa-solid fa-trash-can mr-1"></i> Reset Collection
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Tag Pills -->
+      <div class="flex flex-wrap gap-2">
+        <button onclick="filterCoupons('all')" class="filter-btn bg-pink-500 text-white font-heading font-bold text-xs px-4 py-2 rounded-xl transition shadow-sm">
+          All (25)
+        </button>
+        <button onclick="filterCoupons('Travel')" class="filter-btn bg-white hover:bg-pink-50 text-pink-700 font-heading font-bold text-xs px-4 py-2 rounded-xl border border-pink-200 transition">
+          ✈️ Travel (6)
+        </button>
+        <button onclick="filterCoupons('Spicy')" class="filter-btn bg-white hover:bg-rose-50 text-rose-700 font-heading font-bold text-xs px-4 py-2 rounded-xl border border-rose-200 transition">
+          🔥 Spicy (6)
+        </button>
+        <button onclick="filterCoupons('Food')" class="filter-btn bg-white hover:bg-amber-50 text-amber-700 font-heading font-bold text-xs px-4 py-2 rounded-xl border border-amber-200 transition">
+          🍜 Food (4)
+        </button>
+        <button onclick="filterCoupons('Fun')" class="filter-btn bg-white hover:bg-purple-50 text-purple-700 font-heading font-bold text-xs px-4 py-2 rounded-xl border border-purple-200 transition">
+          👑 Fun & Playful (9)
+        </button>
+      </div>
+
+      <!-- Grid of Coupons -->
+      <div id="couponGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- PRIZE WIN POPUP MODAL -->
+  <div id="prizeModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 md:p-8 text-center shadow-2xl border-4 border-pink-300 relative animate-bounce-short">
+      
+      <div class="w-24 h-24 bg-gradient-to-tr from-pink-200 to-rose-200 rounded-3xl flex items-center justify-center text-5xl mx-auto mb-4 shadow-lg border border-white">
+        <span id="modalIcon">🎁</span>
+      </div>
+
+      <span id="modalCategoryBadge" class="text-xs font-heading font-bold uppercase bg-pink-100 text-pink-700 px-3 py-1 rounded-full border border-pink-300">
+        Category
+      </span>
+
+      <h3 id="modalTitle" class="text-2xl font-extrabold text-slate-800 font-heading mt-3">
+        You Won A Coupon!
+      </h3>
+
+      <p id="modalDesc" class="text-sm text-slate-600 mt-2 font-medium leading-relaxed">
+        Description goes here...
+      </p>
+
+      <button onclick="claimPrizeModal()" class="w-full arcade-btn bg-pink-500 hover:bg-pink-600 text-white font-heading font-bold py-3.5 rounded-2xl text-base mt-6 transition">
+        Collect To Locker 🎟️
+      </button>
+
+    </div>
+  </div>
+
+  <footer class="text-center text-xs text-slate-500 mt-12 font-medium">
+    Made with ❤️ by Tristan for Huini | Spain 🇪🇸 ✈️ 🇸🇬 Singapore
+  </footer>
+
+  <script>
+    /* 1. FLOATING HEARTS ANIMATION GENERATOR */
+    function createFloatingHearts() {
+      const container = document.getElementById('heartsContainer');
+      const heartSymbols = ['💖', '💕', '💗', '🌸', '✨'];
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart text-lg md:text-2xl';
+        heart.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (8 + Math.random() * 8) + 's';
+        heart.style.animationDelay = (Math.random() * 5) + 's';
+        container.appendChild(heart);
+      }
+    }
+    createFloatingHearts();
+
+    /* 2. PASSWORD SECURITY GATEKEEPER */
+    function verifyPassword() {
+      const input = document.getElementById('passwordInput').value.trim();
+      const errorMsg = document.getElementById('passwordError');
+      const card = document.getElementById('passwordCard');
+      
+      // Accepts "0304", "34", "03/04", "3/4"
+      if (['0304', '34', '03/04', '3/4'].includes(input)) {
+        playAudio('win');
+        document.getElementById('passwordModal').classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+          document.getElementById('passwordModal').style.display = 'none';
+        }, 500);
+      } else {
+        playAudio('click');
+        errorMsg.classList.remove('hidden');
+        card.classList.remove('animate-shake');
+        void card.offsetWidth; // trigger reflow
+        card.classList.add('animate-shake');
+      }
+    }
+
+    /* 3. WEB AUDIO SYNTHESIZER */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playAudio(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+
+      if (type === 'click') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(500, now);
+        osc.frequency.exponentialRampToValueAtTime(850, now + 0.07);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.07);
+        osc.start(now);
+        osc.stop(now + 0.07);
+      } else if (type === 'drop') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.linearRampToValueAtTime(140, now + 0.35);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === 'win') {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.25);
+        });
+      }
+    }
+
+    /* 4. DUAL CLOCKS & ACTIVITY STATUS TRACKER */
+    function updateClocks() {
+      const now = new Date();
+
+      // Tristan in Spain (Europe/Madrid)
+      const spainStr = now.toLocaleTimeString('en-US', { timeZone: 'Europe/Madrid', hour12: false });
+      const spainDateStr = now.toLocaleDateString('en-US', { timeZone: 'Europe/Madrid', weekday: 'short', month: 'short', day: 'numeric' });
+      const spainHour = parseInt(now.toLocaleTimeString('en-US', { timeZone: 'Europe/Madrid', hour: '2-digit', hour12: false }));
+      
+      document.getElementById('spainTime').innerText = spainStr;
+      document.getElementById('spainDate').innerText = spainDateStr;
+      document.getElementById('spainSky').innerText = (spainHour >= 6 && spainHour < 20) ? '☀️' : '🌙';
+      
+      let spainStatus = "Tristan is coding for Huini 💻";
+      if (spainHour >= 0 && spainHour < 8) spainStatus = "Tristan is sleeping 😴";
+      else if (spainHour >= 13 && spainHour < 15) spainStatus = "Tristan is eating lunch 🍝";
+      else if (spainHour >= 21) spainStatus = "Tristan is missing Huini 💕";
+      document.getElementById('spainStatus').innerText = spainStatus;
+
+      // Huini in Singapore (Asia/Singapore)
+      const sgStr = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Singapore', hour12: false });
+      const sgDateStr = now.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore', weekday: 'short', month: 'short', day: 'numeric' });
+      const sgHour = parseInt(now.toLocaleTimeString('en-US', { timeZone: 'Asia/Singapore', hour: '2-digit', hour12: false }));
+      
+      document.getElementById('singaporeTime').innerText = sgStr;
+      document.getElementById('singaporeDate').innerText = sgDateStr;
+      document.getElementById('sgSky').innerText = (sgHour >= 6 && sgHour < 20) ? '☀️' : '🌙';
+
+      let sgStatus = "Huini is being super cute ✨";
+      if (sgHour >= 0 && sgHour < 8) sgStatus = "Huini is dreaming 😴";
+      else if (sgHour >= 12 && sgHour < 14) sgStatus = "Huini is eating lunch 🍜";
+      else if (sgHour >= 19 && sgHour < 21) sgStatus = "Huini is having dinner 🍱";
+      document.getElementById('sgStatus').innerText = sgStatus;
+    }
+    setInterval(updateClocks, 1000);
+    updateClocks();
+
+    /* 5. LOVE LETTER ACCORDION TOGGLE */
+    function toggleLoveLetter() {
+      playAudio('click');
+      const content = document.getElementById('letterContent');
+      const chevron = document.getElementById('letterChevron');
+
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        chevron.style.transform = 'rotate(180deg)';
+      } else {
+        content.classList.add('hidden');
+        chevron.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    /* 6. COMPLETE 25 COUPON POOL DATA */
+    const COUPONS_LIST = [
+      // Travel & Adventure (1-6)
+      { id: 1, category: "Travel", title: "Trip to South Korea", desc: "K-Drama tour, shopping in Seoul, and K-BBQ feast!", icon: "🇰🇷", bg: "from-sky-100 to-indigo-100", border: "border-sky-300", text: "text-sky-900" },
+      { id: 2, category: "Travel", title: "Seeing Aurora Borealis", desc: "Chasing the magical Northern Lights together in Europe!", icon: "🌌", bg: "from-teal-100 to-indigo-100", border: "border-teal-300", text: "text-teal-900" },
+      { id: 3, category: "Travel", title: "Romantic Trip to Japan", desc: "Cherry blossoms, hot springs, and delicious ramen in Tokyo!", icon: "🇯🇵", bg: "from-rose-100 to-pink-100", border: "border-rose-300", text: "text-rose-900" },
+      { id: 4, category: "Travel", title: "Explore Spain Together", desc: "Guided romantic walk through Madrid & beach date in Barcelona!", icon: "🇪🇸", bg: "from-amber-100 to-red-100", border: "border-amber-300", text: "text-amber-900" },
+      { id: 5, category: "Travel", title: "Singapore Sunset Cruise", desc: "Marina Bay luxury sunset cruise with drinks and views!", icon: "🌅", bg: "from-red-100 to-rose-100", border: "border-red-300", text: "text-red-900" },
+      { id: 6, category: "Travel", title: "Backpacking Escapade", desc: "Fun backpacking adventure anywhere in the world chosen by Huini!", icon: "🎒", bg: "from-blue-100 to-cyan-100", border: "border-blue-300", text: "text-blue-900" },
+
+      // Spicy & Intimate (7-12)
+      { id: 7, category: "Spicy", title: "Midnight Sensual Massage", desc: "45-minute relaxing full body massage with scented oils by Tristan.", icon: "🕯️", bg: "from-red-100 to-rose-200", border: "border-red-400", text: "text-red-950" },
+      { id: 8, category: "Spicy", title: "Extra Spicy Bath Night", desc: "Warm relaxing bubble bath, soft candlelight, and wine together.", icon: "🛁", bg: "from-pink-200 to-purple-200", border: "border-pink-400", text: "text-pink-950" },
+      { id: 9, category: "Spicy", title: "Mystery Fantasy Evening", desc: "One secret intimate wish fulfilled completely with no questions asked!", icon: "🔥", bg: "from-rose-200 to-red-200", border: "border-rose-400", text: "text-rose-950" },
+      { id: 10, category: "Spicy", title: "100 Kisses & Cuddles Pass", desc: "Non-stop physical affection and hugs whenever we meet!", icon: "💋", bg: "from-red-200 to-amber-200", border: "border-red-400", text: "text-red-950" },
+      { id: 11, category: "Spicy", title: "Master Tease & Pamper", desc: "Spoiling Huini all night long with total devotion.", icon: "💆‍♂️", bg: "from-purple-200 to-rose-200", border: "border-purple-400", text: "text-purple-950" },
+      { id: 12, category: "Spicy", title: "Romantic Hotel Getaway", desc: "Luxury boutique hotel staycation for just the two of us.", icon: "🏨", bg: "from-rose-100 to-pink-200", border: "border-rose-400", text: "text-rose-950" },
+
+      // Food & Treats (13-16)
+      { id: 13, category: "Food", title: "Unlimited Dessert Date", desc: "Late night boba, waffles, and ice cream delivered to bed!", icon: "🍨", bg: "from-amber-100 to-yellow-100", border: "border-amber-300", text: "text-amber-900" },
+      { id: 14, category: "Food", title: "Home Cooked Dinner", desc: "Tristan cooks delicious traditional Spanish Paella or your favorite dish!", icon: "🍷", bg: "from-orange-100 to-red-100", border: "border-orange-300", text: "text-orange-900" },
+      { id: 15, category: "Food", title: "Late Night Supper Run", desc: "Midnight hawker or tapas date whenever Huini gets hungry!", icon: "🍜", bg: "from-teal-100 to-purple-100", border: "border-teal-300", text: "text-teal-900" },
+      { id: 16, category: "Food", title: "Premium Buffet Feast", desc: "All-you-can-eat luxury seafood or K-BBQ buffet on Tristan!", icon: "🥩", bg: "from-red-100 to-amber-100", border: "border-red-300", text: "text-red-900" },
+
+      // Fun & Playful (17-25)
+      { id: 17, category: "Fun", title: "One Full Day Queen Pass", desc: "Huini makes all decisions for 24 hours straight!", icon: "👑", bg: "from-purple-100 to-indigo-100", border: "border-purple-300", text: "text-purple-900" },
+      { id: 18, category: "Fun", title: "Win Any Argument Card", desc: "Instantly win any disagreement or debate with zero objections!", icon: "🏆", bg: "from-yellow-100 to-amber-100", border: "border-yellow-300", text: "text-amber-900" },
+      { id: 19, category: "Fun", title: "Unlimited Hugs & Cuddles", desc: "Warm bear hugs guaranteed anytime upon request.", icon: "🫂", bg: "from-pink-100 to-rose-100", border: "border-pink-300", text: "text-pink-900" },
+      { id: 20, category: "Fun", title: "Movie Marathon Night", desc: "Blanket fort, popcorn, and favorite movies all night long.", icon: "🍿", bg: "from-sky-100 to-indigo-100", border: "border-sky-300", text: "text-sky-900" },
+      { id: 21, category: "Fun", title: "Shopping Spree Sponsorship", desc: "Tristan carries all your bags and buys your favorite outfit!", icon: "🛍️", bg: "from-pink-100 to-purple-100", border: "border-pink-300", text: "text-pink-900" },
+      { id: 22, category: "Fun", title: "Pamper Spa Day", desc: "Full day manicures, pedicures, and pampering session.", icon: "💅", bg: "from-teal-100 to-pink-100", border: "border-teal-300", text: "text-teal-900" },
+      { id: 23, category: "Fun", title: "Late Night Car Drive", desc: "Cozy night drive with music and city light views.", icon: "🚗", bg: "from-indigo-100 to-slate-100", border: "border-indigo-300", text: "text-indigo-900" },
+      { id: 24, category: "Fun", title: "No Questions Asked Yes Day", desc: "Tristan has to say YES to everything Huini asks for 1 day!", icon: "✨", bg: "from-emerald-100 to-teal-100", border: "border-emerald-300", text: "text-emerald-900" },
+      { id: 25, category: "Fun", title: "Personal Foot & Back Massage", desc: "30-minute foot massage after a long day of walking around.", icon: "🦶", bg: "from-amber-100 to-orange-100", border: "border-amber-300", text: "text-amber-900" }
+    ];
+
+    /* 7. ARCADE CLAW MACHINE CANVAS PHYSICS & LOGIC */
+    const canvas = document.getElementById('clawCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let clawX = canvas.width / 2;
+    let clawY = 40;
+    const clawMinY = 40;
+    const clawMaxY = 310;
+    const chuteX = 400;
+    const chuteWidth = 70;
+
+    let clawState = 'idle'; // idle, dropping, grabbing, retracting, moving_to_chute, releasing
+    let grabbedCapsule = null;
+    let currentWonCoupon = null;
+
+    const capsules = [];
+    const colors = ['#f472b6', '#fb7185', '#c084fc', '#38bdf8', '#facc15', '#4ade80', '#f87171', '#e879f9'];
+
+    function initCapsules() {
+      capsules.length = 0;
+      const totalCapsules = 16;
+      const minX = 40;
+      const maxX = canvas.width - 110;
+
+      for (let i = 0; i < totalCapsules; i++) {
+        const coupon = COUPONS_LIST[i % COUPONS_LIST.length];
+        capsules.push({
+          x: minX + Math.random() * (maxX - minX),
+          y: canvas.height - 35 - (Math.random() * 20),
+          radius: 17,
+          color: colors[i % colors.length],
+          coupon: coupon
+        });
+      }
+    }
+
+    initCapsules();
+
+    function resetClawMachine() {
+      playAudio('click');
+      clawX = canvas.width / 2;
+      clawY = clawMinY;
+      clawState = 'idle';
+      grabbedCapsule = null;
+      initCapsules();
+    }
+
+    function renderClawMachine() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Top Rail Gantry
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(0, 15, canvas.width, 10);
+      ctx.fillStyle = '#f43f5e';
+      ctx.fillRect(clawX - 25, 10, 50, 20);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(clawX - 25, 10, 50, 20);
+
+      // Hanging Cable Wire
+      ctx.beginPath();
+      ctx.moveTo(clawX, 20);
+      ctx.lineTo(clawX, clawY);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Drop Chute Box
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(chuteX, canvas.height - 70, chuteWidth, 70);
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(chuteX, canvas.height - 70, chuteWidth, 70);
+
+      ctx.fillStyle = '#f472b6';
+      ctx.font = 'bold 10px "Fredoka", sans-serif';
+      ctx.fillText('PRIZE CHUTE', chuteX + 4, canvas.height - 25);
+
+      // Draw Prize Capsules
+      capsules.forEach(cap => {
+        ctx.beginPath();
+        ctx.arc(cap.x, cap.y, cap.radius, Math.PI, 0, false);
+        ctx.fillStyle = cap.color;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(cap.x, cap.y, cap.radius, 0, Math.PI, false);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(cap.x, cap.y, cap.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#1e293b';
+        ctx.font = '11px sans-serif';
+        ctx.fillText(cap.coupon.icon, cap.x - 7, cap.y + 4);
+      });
+
+      // Draw Mechanical 3-Prong Vertical Claw
+      ctx.save();
+      ctx.translate(clawX, clawY);
+
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.arc(0, 0, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fb7185';
+      ctx.beginPath();
+      ctx.arc(0, 0, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      const clawOpen = (clawState === 'dropping' || clawState === 'releasing');
+      const leftAngle = clawOpen ? -0.7 : -0.25;
+      const rightAngle = clawOpen ? 0.7 : 0.25;
+      const centerLength = clawOpen ? 30 : 25;
+
+      // Left Prong
+      ctx.save();
+      ctx.rotate(leftAngle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-12, 22);
+      ctx.lineTo(-4, 34);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+
+      // Right Prong
+      ctx.save();
+      ctx.rotate(rightAngle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(12, 22);
+      ctx.lineTo(4, 34);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+
+      // Center Prong
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, centerLength);
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#fb7185';
+      ctx.stroke();
+
+      ctx.restore();
+
+      // Failsafe State Machine Logic
+      if (clawState === 'dropping') {
+        clawY += 4.5;
+
+        capsules.forEach(cap => {
+          const dx = clawX - cap.x;
+          const dy = (clawY + 28) - cap.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < cap.radius + 8 && !grabbedCapsule) {
+            grabbedCapsule = cap;
+            clawState = 'grabbing';
+            setTimeout(() => { clawState = 'retracting'; }, 250);
+          }
+        });
+
+        if (clawY >= clawMaxY && clawState === 'dropping') {
+          clawState = 'retracting';
+        }
+      } else if (clawState === 'retracting') {
+        clawY -= 4.5;
+        if (grabbedCapsule) {
+          grabbedCapsule.x = clawX;
+          grabbedCapsule.y = clawY + 28;
+        }
+
+        if (clawY <= clawMinY) {
+          clawY = clawMinY;
+          clawState = grabbedCapsule ? 'moving_to_chute' : 'idle';
+        }
+      } else if (clawState === 'moving_to_chute') {
+        const targetX = chuteX + 30;
+        if (clawX < targetX) {
+          clawX += 4;
+          if (grabbedCapsule) {
+            grabbedCapsule.x = clawX;
+            grabbedCapsule.y = clawY + 28;
+          }
+        } else {
+          clawState = 'releasing';
+          setTimeout(() => {
+            if (grabbedCapsule) {
+              triggerPrizeWin(grabbedCapsule.coupon);
+              const idx = capsules.indexOf(grabbedCapsule);
+              if (idx > -1) capsules.splice(idx, 1);
+              grabbedCapsule = null;
+            }
+            clawState = 'idle';
+
+            if (capsules.length === 0) {
+              setTimeout(initCapsules, 1000);
+            }
+          }, 350);
+        }
+      }
+
+      requestAnimationFrame(renderClawMachine);
+    }
+
+    requestAnimationFrame(renderClawMachine);
+
+    /* Arcade Controller Motion Listeners */
+    const btnLeft = document.getElementById('btnLeft');
+    const btnRight = document.getElementById('btnRight');
+    const btnDrop = document.getElementById('btnDrop');
+
+    let moveTimer = null;
+
+    function startMoveClaw(direction) {
+      if (clawState !== 'idle') return;
+      playAudio('click');
+      if (moveTimer) clearInterval(moveTimer);
+      moveTimer = setInterval(() => {
+        if (direction === 'left') clawX = Math.max(30, clawX - 6);
+        else if (direction === 'right') clawX = Math.min(chuteX - 10, clawX + 6);
+      }, 25);
+    }
+
+    function stopMoveClaw() {
+      if (moveTimer) {
+        clearInterval(moveTimer);
+        moveTimer = null;
+      }
+    }
+
+    btnLeft.addEventListener('mousedown', () => startMoveClaw('left'));
+    btnLeft.addEventListener('mouseup', stopMoveClaw);
+    btnLeft.addEventListener('mouseleave', stopMoveClaw);
+    btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); startMoveClaw('left'); });
+    btnLeft.addEventListener('touchend', stopMoveClaw);
+
+    btnRight.addEventListener('mousedown', () => startMoveClaw('right'));
+    btnRight.addEventListener('mouseup', stopMoveClaw);
+    btnRight.addEventListener('mouseleave', stopMoveClaw);
+    btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); startMoveClaw('right'); });
+    btnRight.addEventListener('touchend', stopMoveClaw);
+
+    btnDrop.addEventListener('click', () => {
+      if (clawState === 'idle') {
+        playAudio('drop');
+        clawState = 'dropping';
+      }
+    });
+
+    /* Keyboard Controls support */
+    window.addEventListener('keydown', (e) => {
+      if (clawState !== 'idle') return;
+      if (e.key === 'ArrowLeft') startMoveClaw('left');
+      else if (e.key === 'ArrowRight') startMoveClaw('right');
+      else if (e.key === ' ' || e.key === 'ArrowDown') {
+        if (clawState === 'idle') {
+          playAudio('drop');
+          clawState = 'dropping';
+        }
+      }
+    });
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') stopMoveClaw();
+    });
+
+    /* 8. PRIZE WIN POPUP & PERSISTENCE WALLET */
+    function triggerPrizeWin(coupon) {
+      currentWonCoupon = coupon;
+      playAudio('win');
+
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+
+      document.getElementById('modalIcon').innerText = coupon.icon;
+      document.getElementById('modalCategoryBadge').innerText = coupon.category;
+      document.getElementById('modalTitle').innerText = coupon.title;
+      document.getElementById('modalDesc').innerText = coupon.desc;
+
+      document.getElementById('prizeModal').classList.remove('hidden');
+    }
+
+    function claimPrizeModal() {
+      playAudio('click');
+      if (currentWonCoupon) {
+        unlockCouponInWallet(currentWonCoupon.id);
+      }
+      document.getElementById('prizeModal').classList.add('hidden');
+    }
+
+    function getUnlockedCouponIds() {
+      const stored = localStorage.getItem('tristan_huini_unlocked_v5');
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function getRedeemedCouponIds() {
+      const stored = localStorage.getItem('tristan_huini_redeemed_v5');
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function unlockCouponInWallet(id) {
+      const unlocked = getUnlockedCouponIds();
+      if (!unlocked.includes(id)) {
+        unlocked.push(id);
+        localStorage.setItem('tristan_huini_unlocked_v5', JSON.stringify(unlocked));
+      }
+      renderWallet();
+    }
+
+    function toggleRedeemCoupon(id) {
+      playAudio('click');
+      const redeemed = getRedeemedCouponIds();
+      const idx = redeemed.indexOf(id);
+      if (idx > -1) {
+        redeemed.splice(idx, 1);
+      } else {
+        redeemed.push(id);
+      }
+      localStorage.setItem('tristan_huini_redeemed_v5', JSON.stringify(redeemed));
+      renderWallet();
+    }
+
+    function resetAllCoupons() {
+      playAudio('click');
+      localStorage.removeItem('tristan_huini_unlocked_v5');
+      localStorage.removeItem('tristan_huini_redeemed_v5');
+      renderWallet();
+    }
+
+    let activeFilter = 'all';
+
+    function filterCoupons(cat) {
+      playAudio('click');
+      activeFilter = cat;
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.innerText.includes(cat) || (cat === 'all' && btn.innerText.includes('All'))) {
+          btn.classList.add('bg-pink-500', 'text-white');
+          btn.classList.remove('bg-white', 'text-pink-700', 'text-amber-700', 'text-red-700', 'text-purple-700', 'text-rose-700');
+        } else {
+          btn.classList.remove('bg-pink-500', 'text-white');
+          btn.classList.add('bg-white');
+        }
+      });
+
+      renderWallet();
+    }
+
+    function renderWallet() {
+      const unlockedIds = getUnlockedCouponIds();
+      const redeemedIds = getRedeemedCouponIds();
+      const grid = document.getElementById('couponGrid');
+      const badge = document.getElementById('couponCountBadge');
+
+      badge.innerText = `${unlockedIds.length} / 25 Unlocked`;
+
+      let displayList = COUPONS_LIST;
+      if (activeFilter !== 'all') {
+        displayList = COUPONS_LIST.filter(c => c.category === activeFilter);
+      }
+
+      if (displayList.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 glass-card rounded-2xl border-2 border-dashed border-pink-200">
+            <div class="text-4xl mb-2">🎟️</div>
+            <p class="font-heading text-xl text-slate-700 font-bold">No coupons found!</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = displayList.map(c => {
+        const isUnlocked = unlockedIds.includes(c.id);
+        const isRedeemed = redeemedIds.includes(c.id);
+
+        return `
+          <div class="glass-card bg-gradient-to-r ${isUnlocked ? c.bg : 'from-slate-100 to-slate-200'} p-5 rounded-2xl border ${isUnlocked ? c.border : 'border-slate-300'} flex flex-col justify-between relative overflow-hidden transition-all ${!isUnlocked ? 'opacity-70' : ''}">
+            
+            ${isRedeemed ? `
+              <div class="absolute right-3 top-3 border-2 border-emerald-600 text-emerald-700 font-heading text-[10px] font-black px-2 py-0.5 rounded uppercase stamp-redeemed pointer-events-none bg-white/90">
+                REDEEMED 💕
+              </div>
+            ` : ''}
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-white/90 rounded-2xl flex items-center justify-center text-2xl shadow-sm border border-pink-200 shrink-0">
+                ${isUnlocked ? c.icon : '🔒'}
+              </div>
+              <div>
+                <span class="text-[10px] bg-white/80 ${c.text} font-bold font-heading px-2 py-0.5 rounded-full uppercase border border-pink-200">${c.category}</span>
+                <h4 class="font-heading text-lg font-bold ${c.text} mt-1">${isUnlocked ? c.title : 'Locked Capsule'}</h4>
+                <p class="text-xs ${c.text} opacity-90 mt-0.5 leading-relaxed">${isUnlocked ? c.desc : 'Catch this capsule in Tristan & Huini\'s Arcade Claw Machine!'}</p>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-200/50 flex justify-between items-center">
+              <span class="text-[11px] text-slate-500 font-medium">${isUnlocked ? 'Valid for reunion trip ✈️' : 'Locked in Machine'}</span>
+              ${isUnlocked ? `
+                <button onclick="toggleRedeemCoupon(${c.id})" class="text-xs font-heading font-bold px-3 py-1.5 rounded-xl ${isRedeemed ? 'bg-slate-200 text-slate-700' : 'arcade-btn bg-pink-500 text-white'} transition shadow-sm">
+                  ${isRedeemed ? 'Undo Stamp' : 'Redeem Now 💕'}
+                </button>
+              ` : `
+                <span class="text-xs font-bold text-slate-400 bg-slate-200 px-3 py-1 rounded-xl">Catch in Game</span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderWallet();
+  </script>
+</body>
+</html>
